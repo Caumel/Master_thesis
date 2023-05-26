@@ -5,12 +5,11 @@ from ikm.utils.data_preprocessor import DataPreprocessor
 
 class TSObject:
 
-    def __init__(self, file_name='', data=None, leave_one_third_part_mode=None, leave_every_nth_el=None,
-                 delete_every_nth_el=None,
-                 box_cox=None, dwt=None,
+    def __init__(self, file_name='', data=None,
+                 box_cox=None,
                  dwt_complex=None,
                  z_normalization=None, z_score=None, z_transform_mode=None, excl_wm=None,
-                 left_right=None, front_back=None, band=None, hilbert=None, specific_electrodes=None, electrodes=None):
+                 band=None, hilbert=None, specific_windmills=None, windmills=None):
 
         """
         Initializes an object for IKM. Applies transformation(s) to the data.
@@ -32,53 +31,29 @@ class TSObject:
         if excl_wm:
 
             # excl_wm = [1,2,3,4,5,10]
-
-            # self.data = data_preprocessor.leave_parts_electrodes(data, left_right=left_right,
-            #                                                      front_back=front_back)
-            print(data.shape)
-            print(data)
             self.data = data_preprocessor.leave_windmills(data,excl_wm)
-            print(data.shape)        
 
-        return
+        if specific_windmills:
 
-        if specific_electrodes:
-            self.data = data_preprocessor.choose_parts_electrodes(data, electrodes=electrodes)
+            # windmills = [1,2,3,4,5]
+            self.data = data_preprocessor.choose_parts_windmills(data, windmills=windmills)
 
-        if leave_one_third_part_mode is not None:
-            self.data = data_preprocessor.leave_one_third_part(self.data, leave_one_third_part_mode)
+        # if band is not None:
+        #     self.data = data_preprocessor.butter_eeg_bands_extraction(self.data, fs, band)
 
-        if leave_every_nth_el is not None:
-            self.data = data_preprocessor.leave_every_nth_el(self.data, leave_every_nth_el)
-
-        if delete_every_nth_el is not None:
-            self.data = data_preprocessor.delete_every_nth_el(self.data, delete_every_nth_el)
-
-        # self.data = data_preprocessor.theta_alpha_extraction(self.data)
-
-        # self.data = data_preprocessor.EEG_bandstop(self.data, fs)
-
-        if band is not None:
-            self.data = data_preprocessor.butter_eeg_bands_extraction(self.data, fs, band)
-
-        if hilbert == 'phase':
-            self.data = data_preprocessor.hilbert_phase(self.data)
-        elif hilbert == 'ampl':
-            self.data = data_preprocessor.hilbert_amplitude(self.data)
-
-        # print(self.data)
+        # if hilbert == 'phase':
+        #     self.data = data_preprocessor.hilbert_phase(self.data)
+        # elif hilbert == 'ampl':
+        #     self.data = data_preprocessor.hilbert_amplitude(self.data)
 
         # box-cox transformation
         if box_cox:
             self.data = data_preprocessor.box_cox_transform(self.data)
 
-        # DWT transformation with statistics extraction
-        if dwt_complex:
-            self.data = data_preprocessor.get_eeg_features(self.data, 'db4', 5)
-
-        # DWT transformation simple
-        if dwt:
-            self.data = data_preprocessor.dwt(self.data, 'db4')
+        # # ????
+        # # DWT transformation with statistics extraction
+        # if dwt_complex:
+        #     self.data = data_preprocessor.get_eeg_features(self.data, 'db4', 5)
 
         # z-normalization applied
         if z_normalization:
@@ -87,6 +62,8 @@ class TSObject:
         # z-score transformation
         if z_score:
             self.data = data_preprocessor.z_score(self.data)
+
+        return
 
         # Z transformation
 
