@@ -457,7 +457,20 @@ def get_datasets(df,range_cut, path, year):
         df_high, df_low, df_moderate = get_datasets_per_pressure(df_pressure,pressures[index],range_cut)
         save_datasets(df_high, df_low, df_moderate, path, year, range_cut)
 
+def reorder_columns(df_high, df_low, df_moderate):
+
+    # TODO:
+    #       Si añadimos otras columnas hay que cambiar esto.
+    df_high = df_high.select(['time', 'index', 'n_event', 'cc', 'o3', 'pv', 'cape', 'blh', 'd2m', 'z', 'relative_humidity', 't2m', 't100m', 't135m', 'wdir100m', 'wspeed135m', 'wspeed100m'])
+    df_low = df_low.select(['time', 'index', 'n_event', 'cc', 'o3', 'pv', 'cape', 'blh', 'd2m', 'z', 'relative_humidity', 't2m', 't100m', 't135m', 'wdir100m', 'wspeed135m', 'wspeed100m'])
+    df_moderate = df_moderate.select(['time', 'index', 'n_event', 'cc', 'o3', 'pv', 'cape', 'blh', 'd2m', 'z', 'relative_humidity', 't2m', 't100m', 't135m', 'wdir100m', 'wspeed135m', 'wspeed100m'])
+
+    return df_high, df_low, df_moderate
+
 def save_datasets(df_high, df_low, df_moderate, path, year, range_cut):
+
+    df_high, df_low, df_moderate = reorder_columns(df_high,df_low,df_moderate)
+
     df_high.write_csv(os.path.join(path,f"{year}_{range_cut}_{speed_high}_high.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
     df_low.write_csv(os.path.join(path,f"{year}_{range_cut}_low.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
     df_moderate.write_csv(os.path.join(path,f"{year}_{range_cut}_moderate.csv"), datetime_format='%Y-%m-%d %H:%M:%S')

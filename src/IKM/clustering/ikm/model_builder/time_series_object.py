@@ -1,6 +1,7 @@
 import numpy as np
 
 from ikm.utils.data_preprocessor import DataPreprocessor
+from tqdm import tqdm
 
 
 class TSObject:
@@ -9,7 +10,7 @@ class TSObject:
                  box_cox=None,
                  dwt_complex=None,
                  z_normalization=None, z_score=None, z_transform_mode=None, excl_wm=None,
-                 band=None, hilbert=None, specific_windmills=None, windmills=None):
+                 band=None, hilbert=None, specific_windmills=None, windmills=None,kind_mean="all"):
 
         """
         Initializes an object for IKM. Applies transformation(s) to the data.
@@ -17,12 +18,14 @@ class TSObject:
 
         self.name = file_name # Name of the file
 
-        self.data = data  #df 
-        self.data_mean = self.data.mean()
+        self.data = data  #df
+        if kind_mean == "all":
+            self.data_mean = self.data[:,3:].mean()
+        else:
+            self.data_mean = np.mean(data[:,3:], axis=0)
 
         fs = 250.0
         data_preprocessor = DataPreprocessor()
-
 
         # Applying the sinus function
         # self.data = data_preprocessor.sin(self.data)
@@ -58,34 +61,33 @@ class TSObject:
         # z-normalization applied
         if z_normalization:
             self.data = data_preprocessor.z_normalize(self.data)
+            # Here self.data is a polars 
+
 
         # z-score transformation
         if z_score:
             self.data = data_preprocessor.z_score(self.data)
+            # Here self.data is a numpy 
 
-        return
+        # # Z transformation
+        # z = 1j
 
-        # Z transformation
+        # if z_transform_mode == 'magnitude':
+        #     z_transformed, self.data, phase = data_preprocessor.z_transform(self.data, z)
 
-        z = 1j
+        # elif z_transform_mode == 'phase':
+        #     z_transformed, magnitude, self.data = data_preprocessor.z_transform(self.data, z)
 
-        if z_transform_mode == 'magnitude':
+        ## Compute Data and Quadrs
+        self.numbers = self.data[:,3:]
+        self.rest = self.data[:,:3]
 
-            z_transformed, self.data, phase = data_preprocessor.z_transform(self.data, z)
+        self.m = np.size(self.numbers, 0)
+        self.d = np.size(self.numbers, 1)
 
-        elif z_transform_mode == 'phase':
-            z_transformed, magnitude, self.data = data_preprocessor.z_transform(self.data, z)
+        self.comp_data = data_preprocessor.compute_data(self.numbers, self.d, self.m)
 
-        # Remove dimensions
-        # array_dimensions_rmv = [0, 1, 3, 4, 7, 8, 9, 10, 11, 12, 13, 14, 15,  17, 18]
-        # self.data = data_preprocessor.remove_dimensions(self.data, array_dimensions_rmv)
-
-        self.m = np.size(self.data, 0)
-        self.d = np.size(self.data, 1)
-
-        self.comp_data = data_preprocessor.compute_data(self.data, self.d, self.m)
-
-        self.quadrs = data_preprocessor.compute_quadrs(self.data, self.d, self.m)
-
+        self.quadrs = data_preprocessor.compute_quadrs(self.numbers, self.d, self.m) 
+        
     def __str__(self):
         return self.name

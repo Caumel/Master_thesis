@@ -99,10 +99,10 @@ class DataPreprocessor:
         data_temporal = data.drop("time").to_numpy()
         dimensions = np.size(data_temporal, 1)
         data_temporal = self.shift_to_positive(data_temporal)
-        for col in range(2,dimensions):
+        for col in range(3,dimensions):
             try:
                 info, lambda_box_cox = stats.boxcox(data_temporal[:, col])
-                data.with_column(pl.Series(list_columns[col+1], info))
+                data.with_column(pl.Series(list_columns[col], info))
             except:
                 continue
         return data
@@ -191,8 +191,45 @@ class DataPreprocessor:
 
         return data
     
+    def z_score(self,data):
+        """
+        Applies z-score transformation.
+        """
+        numbers = data.to_numpy()[:,3:].astype(float)
+        rest = data.to_numpy()[:,:3]
+        numbers_update = stats.zscore(numbers, axis=None)
+        data = np.hstack((rest, numbers_update))
 
+        return data
     
+    def z_transform(self, data, z):
+        """
+        Applies Z transform.
+        """
+
+        numbers = data[:,3:]
+        rest = data[:,:3]
+
+
+        d = np.size(numbers, 1)
+        m = np.size(numbers, 0)
+        z_transformed = np.zeros((m, d), dtype=complex)
+
+        for dim in range(d):
+            for point in range(m):
+                value = numbers[point][dim] * z ** (-point)
+                z_transformed[point][dim] = value
+
+        # Compute the magnitude of the z-transform
+        magnitude = np.abs(z_transformed)
+
+        # Compute the phase of the z-transform
+        phase = np.angle(z_transformed)
+
+        magnitude = np.hstack((rest, magnitude))
+        phase = np.hstack((rest, phase))
+
+        return z_transformed, magnitude, phase
 
     def compute_data(self, data, dimensions, numb_data_points):
         """
@@ -222,120 +259,91 @@ class DataPreprocessor:
         return quadrs
 
 
-    def multi_level_dwt(self, data):
-        """
-        Applies multi-level Discrete Wavelet Transform.
-        """
-        coeffs = 0
-        for col in range(data.ndim + 1):
-            coeffs = pywt.wavedec(data[:, col], 'bior6.8', mode='sym', level=2)
-        return coeffs
+    # def multi_level_dwt(self, data):
+    #     """
+    #     Applies multi-level Discrete Wavelet Transform.
+    #     """
+    #     coeffs = 0
+    #     for col in range(data.ndim + 1):
+    #         coeffs = pywt.wavedec(data[:, col], 'bior6.8', mode='sym', level=2)
+    #     return coeffs
 
-    def z_score(self, data):
-        """
-        Applies z-score transformation.
-        """
-        return stats.zscore(data, axis=None)
+    # # EEG bands extraction using FFT method
+    # def fft_eeg_bands_extraction(self, eeg_data):
 
-    def z_transform(self, data, z):
-        """
-        Applies Z transform.
-        """
+    #     """
+    #     Extracts EEG bands using Fast Fourier Transform.
+    #     """
+    #     fs = 250  # Sampling rate (250 Hz)
 
-        d = np.size(data, 1)
-        m = np.size(data, 0)
-        z_transformed = np.zeros((m, d), dtype=complex)
+    #     # Get real amplitudes of FFT (only in postive frequencies)
+    #     fft_vals = np.absolute(np.fft.rfft(eeg_data))
 
-        for dim in range(d):
-            for point in range(m):
-                z_transformed[point][dim] = data[point][dim] * z ** (-point)
+    #     # Get frequencies for amplitudes in Hz
+    #     fft_freq = np.fft.rfftfreq(len(eeg_data), 1.0 / fs)
 
-        # Compute the magnitude of the z-transform
-        magnitude = np.abs(z_transformed)
+    #     # Define EEG bands
+    #     eeg_bands = {'Delta': (0, 4),
+    #                  'Theta': (4, 8),
+    #                  'Alpha': (8, 12),
+    #                  'Beta': (12, 30),
+    #                  'Gamma': (30, 45)}
 
-        # Compute the phase of the z-transform
-        phase = np.angle(z_transformed)
+    #     eeg_band_fft = dict()
 
-        return z_transformed, magnitude, phase
+    #     for band in eeg_bands:
+    #         freq_ix = np.where((fft_freq >= eeg_bands[band][0]) &
+    #                            (fft_freq <= eeg_bands[band][1]))[0]
+    #         eeg_band_fft[band] = fft_vals[freq_ix]
 
+    #     return eeg_band_fft
 
+    # def butter_bandpass(self, lowcut, highcut, fs, order=5):
 
-    # EEG bands extraction using FFT method
-    def fft_eeg_bands_extraction(self, eeg_data):
+    #     """
+    #     Computes second order sections for Butterworth bandpass filter.
+    #     """
+    #     nyq = 0.5 * fs
+    #     low = lowcut / nyq
+    #     high = highcut / nyq
+    #     sos = butter(order, [low, high], btype='band', output='sos')
+    #     return sos
 
-        """
-        Extracts EEG bands using Fast Fourier Transform.
-        """
-        fs = 250  # Sampling rate (250 Hz)
+    # def butter_bandpass_filter(self, data, lowcut, highcut, fs, order=5):
+    #     """
+    #     Applying Butterworth bandpass filter.
+    #     """
 
-        # Get real amplitudes of FFT (only in postive frequencies)
-        fft_vals = np.absolute(np.fft.rfft(eeg_data))
+    #     sos = self.butter_bandpass(lowcut, highcut, fs, order=order)
+    #     y = sosfilt(sos, data)
+    #     return y
 
-        # Get frequencies for amplitudes in Hz
-        fft_freq = np.fft.rfftfreq(len(eeg_data), 1.0 / fs)
+    # def butter_bandstop(self, lowcut, highcut, fs, order=5):
+    #     """
+    #     Computes second order sections for Butterworth bandstop filter.
+    #     """
+    #     nyq = 0.5 * fs
+    #     low = lowcut / nyq
+    #     high = highcut / nyq
+    #     sos = butter(order, [low, high], btype='bandstop', analog=False, output='sos')
+    #     return sos
 
-        # Define EEG bands
-        eeg_bands = {'Delta': (0, 4),
-                     'Theta': (4, 8),
-                     'Alpha': (8, 12),
-                     'Beta': (12, 30),
-                     'Gamma': (30, 45)}
+    # def butter_bandstop_filter(self, data, lowcut, highcut, fs, order=5):
+    #     """
+    #     Computes second order sections for Butterworth bandstop filter.
+    #     """
+    #     sos = self.butter_bandstop(lowcut, highcut, fs, order=order)
+    #     y = sosfilt(sos, data)
+    #     return y
 
-        eeg_band_fft = dict()
+    # def sin(self, eeg_data):
 
-        for band in eeg_bands:
-            freq_ix = np.where((fft_freq >= eeg_bands[band][0]) &
-                               (fft_freq <= eeg_bands[band][1]))[0]
-            eeg_band_fft[band] = fft_vals[freq_ix]
-
-        return eeg_band_fft
-
-    def butter_bandpass(self, lowcut, highcut, fs, order=5):
-
-        """
-        Computes second order sections for Butterworth bandpass filter.
-        """
-        nyq = 0.5 * fs
-        low = lowcut / nyq
-        high = highcut / nyq
-        sos = butter(order, [low, high], btype='band', output='sos')
-        return sos
-
-    def butter_bandpass_filter(self, data, lowcut, highcut, fs, order=5):
-        """
-        Applying Butterworth bandpass filter.
-        """
-
-        sos = self.butter_bandpass(lowcut, highcut, fs, order=order)
-        y = sosfilt(sos, data)
-        return y
-
-    def butter_bandstop(self, lowcut, highcut, fs, order=5):
-        """
-        Computes second order sections for Butterworth bandstop filter.
-        """
-        nyq = 0.5 * fs
-        low = lowcut / nyq
-        high = highcut / nyq
-        sos = butter(order, [low, high], btype='bandstop', analog=False, output='sos')
-        return sos
-
-    def butter_bandstop_filter(self, data, lowcut, highcut, fs, order=5):
-        """
-        Computes second order sections for Butterworth bandstop filter.
-        """
-        sos = self.butter_bandstop(lowcut, highcut, fs, order=order)
-        y = sosfilt(sos, data)
-        return y
-
-    def sin(self, eeg_data):
-
-        """
-        Applying sinus function to the data.
-        """
-        for electrode in eeg_data.T:
-            sin_data = []
-            for value in electrode:
-                sin_data.append(math.sin(value))
-            eeg_data = np.column_stack((eeg_data, sin_data))
-        return eeg_data
+    #     """
+    #     Applying sinus function to the data.
+    #     """
+    #     for electrode in eeg_data.T:
+    #         sin_data = []
+    #         for value in electrode:
+    #             sin_data.append(math.sin(value))
+    #         eeg_data = np.column_stack((eeg_data, sin_data))
+    #     return eeg_data

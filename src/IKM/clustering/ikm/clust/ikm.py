@@ -43,6 +43,9 @@ class IKM:
 
         i = 0
 
+        print()
+        print("----- [ Start preprocessing ] -----")
+
         data_loader = DataLoader(delimiter='\t')
 
         if loading_setup == "two_f":
@@ -73,7 +76,8 @@ class IKM:
         elif loading_setup == "alco":
             df, objects = data_loader.load_alco(path)
 
-        return
+        print()
+        print("----- [ End preprocessing ] -----")
 
         min_error = sys.float_info.max
         best_cl = "..--~~***~~--.."
@@ -81,11 +85,15 @@ class IKM:
 
         final_str = ""
 
+        print()
+        print("----- [ Start cluster ] -----")
+
         for tries in range(100):
 
             clusters = [[] for i in range(k)]
             counter = 0
             random.shuffle(objects)
+
             for time_series_object in objects:
                 current_object = time_series_object
                 clusters[counter % k].append(current_object)
@@ -94,7 +102,11 @@ class IKM:
             for cluster in clusters:
                 cluster.sort(key=lambda a: a.name)
 
+            print("Ole llegue aqui")
+
             cl = Cluster(clusters)
+
+            break
 
             for i in range(75):
                 cl.step(error)
@@ -107,6 +119,8 @@ class IKM:
                 min_error = cl_error
                 best_cl = cl.__str__()
                 best_clusters = cl.init_best_clusters()
+
+        return
 
         df = Cluster.label_clusters(df, k, best_clusters)
 

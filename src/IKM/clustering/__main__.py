@@ -139,9 +139,19 @@ def main():
                         loading_setup=loading_setup,
                         band='delta', 
                         hilbert='amplitude',
-                        num_clusters = num_clusters, 
+                        num_clusters = num_clusters,
+                        # excl_wm = [],
+                        # specific_windmills=1,
+
+                        z_score=True,
+                        z_normalization=True, 
+                        box_cox=True,
+                        z_transform_mode = "magnitude",
+
                         error=error,
                         report_name='report')
+        
+        break
 
 
 if __name__ == '__main__':

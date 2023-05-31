@@ -3,6 +3,7 @@ import os
 import numpy as np
 import pandas as pd
 import polars as pl
+from tqdm import tqdm
 
 
 from ikm.model_builder.time_series_object import TSObject
@@ -57,36 +58,94 @@ class DataLoader:
                            dwt_complex=None, z_normalization=None, z_score=None,
                            z_transform_mode=None, excl_wm=None,
                            band=None, hilbert=None, path=None,
-                           specific_windmills=None, windmills=None):
+                           specific_windmills=None, windmills=None,take_data="all",kind_mean="all"):
         """
         Loads the depressed patients data from one visit.
         """
 
         objects = []
         df = pd.DataFrame(columns=['ID', 'Data', 'Response'])
-        for filename in os.listdir(path):
+        for filename in tqdm(os.listdir(path)):
+
+            # print(f"processing file: {filename}")
 
             # data = np.loadtxt(os.path.join(path, filename), delimiter=self.delimiter)
             data = pl.read_csv(os.path.join(path, filename))
-            objects.append(
-                TSObject(file_name=filename, # Filename
-                         data=data,          # Information 
-                         box_cox=box_cox,   # Apply Box_cox transformation
-                         dwt_complex=dwt_complex, # Clustering base on the DWT info
-                         z_normalization=z_normalization, # Z normalization apply
-                         z_score=z_score, # Clustering base on the z_score info
-                         z_transform_mode=z_transform_mode, # Transform returned, 'magnitude' or 'phase'
-                         excl_wm=excl_wm,  # Exclude some electrodes (Can i do it with wind farms ?)
-                         band=band,  #Kind of band, Delta, Theta, Beta1, Beta2, 'gamma_1', 'gamma_2'
-                         hilbert=hilbert, # Kind of hilbert transform
-                         specific_windmills=specific_windmills, 
-                         windmills=windmills))
+
+            # TODO:
+            #   - Cuando realizo transformaciones, deberia de hacerlo sobre todos los windmill a la vez o diferenciar por windmill
+            #   - Tengo que crear un objeto de TSObject por timeseries verdad ?
+
+            if take_data == "for_windmill":
+                data = self.split_data_per_windmill(data)
+            else:
+                data = [data]
+                
+            for data_element in data:
+                object = TSObject(file_name=filename, # Filename
+                            data=data_element,          # Information 
+                            box_cox=box_cox,   # Apply Box_cox transformation
+                            dwt_complex=dwt_complex, # Clustering base on the DWT info
+                            z_normalization=z_normalization, # Z normalization apply
+                            z_score=z_score, # Clustering base on the z_score info
+                            z_transform_mode=z_transform_mode, # Transform returned, 'magnitude' or 'phase'
+                            excl_wm=excl_wm,  # Exclude some electrodes (Can i do it with wind farms ?)
+                            band=band,  #Kind of band, Delta, Theta, Beta1, Beta2, 'gamma_1', 'gamma_2'
+                            hilbert=hilbert, # Kind of hilbert transform
+                            specific_windmills=specific_windmills, 
+                            windmills=windmills,
+                            kind_mean=kind_mean)
             
-            return
+                events = self.split_events(object)
+
+            # Concanet objectsç
+            objects.extend(events)
             
-            df.loc[len(df.index)] = [filename, data, filename[-5]]
+            df.loc[len(df.index)] = [filename, data,"A"]
+
+            
+            # TODO:
+            #   Aqui hay que quitar el break y para leer todos los ficheros
+            #   Tambien hay que ver para que usa el df y el tercer elemento
+
+            break
             # Df [ file, data, something ?]
+
         return df, objects
+    
+    def split_data_per_windmill(self,data):
+
+        list_windmill = []
+
+        for n_windmill in range(0,38):
+            list_windmill.append(data.filter(pl.col("index") == n_windmill))
+
+        return list_windmill
+    
+    def split_events(self,TSO_data):
+
+        # Columns ['time', 'index', 'n_event', 'cc', 'o3', 'pv', 'cape', 'blh', 'd2m', 'z', 'relative_humidity', 't2m', 't100m', 't135m', 'wdir100m', 'wspeed135m', 'wspeed100m']
+
+        list_events = []
+
+        categories = np.array(['_'.join(str(item) for item in sublist) for sublist in TSO_data.data[:,1:3].tolist()])
+
+        # Get unique categories
+        unique_categories = np.unique(categories)
+
+        # Split the array into a list of lists based on categories
+        print("         -- > Spliting events")
+        print()
+
+        for category in tqdm(unique_categories):
+            # Select the one event in a big dataframe
+            indices = np.where(categories == category)
+            subset = np.array(TSO_data.data[indices])
+            # Create TSObject with this event
+            time_series = TSObject(file_name = '.'.join(str(item) for item in subset[0][1:3]),data = subset)
+            list_events.append(time_series)
+
+        return list_events
 
     # def load_alco(self, path):
 
