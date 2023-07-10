@@ -6,11 +6,9 @@ from tqdm import tqdm
 
 class TSObject:
 
-    def __init__(self, file_name='', data=None,
-                 box_cox=None,
-                 dwt_complex=None,
-                 z_normalization=None, z_score=None, z_transform_mode=None, excl_wm=None,
-                 band=None, hilbert=None, specific_windmills=None, windmills=None,kind_mean="all"):
+    def __init__(self, file_name='', data=None, box_cox=None,
+                 z_normalization=None, z_score=None, excl_wm=None,
+                 specific_windmills=None, windmills=None,kind_mean="all"):
 
         """
         Initializes an object for IKM. Applies transformation(s) to the data.
@@ -20,15 +18,11 @@ class TSObject:
 
         self.data = data  #df
         if kind_mean == "all":
-            self.data_mean = self.data[:,3:].mean()
+            self.data_mean = self.data[:,4:].mean()
         else:
-            self.data_mean = np.mean(data[:,3:], axis=0)
+            self.data_mean = np.mean(data[:,4:], axis=0)
 
-        fs = 250.0
         data_preprocessor = DataPreprocessor()
-
-        # Applying the sinus function
-        # self.data = data_preprocessor.sin(self.data)
 
         # Remove some wind mills
         if excl_wm:
@@ -41,46 +35,24 @@ class TSObject:
             # windmills = [1,2,3,4,5]
             self.data = data_preprocessor.choose_parts_windmills(data, windmills=windmills)
 
-        # if band is not None:
-        #     self.data = data_preprocessor.butter_eeg_bands_extraction(self.data, fs, band)
-
-        # if hilbert == 'phase':
-        #     self.data = data_preprocessor.hilbert_phase(self.data)
-        # elif hilbert == 'ampl':
-        #     self.data = data_preprocessor.hilbert_amplitude(self.data)
-
         # box-cox transformation
+
         if box_cox:
             self.data = data_preprocessor.box_cox_transform(self.data)
-
-        # # ????
-        # # DWT transformation with statistics extraction
-        # if dwt_complex:
-        #     self.data = data_preprocessor.get_eeg_features(self.data, 'db4', 5)
 
         # z-normalization applied
         if z_normalization:
             self.data = data_preprocessor.z_normalize(self.data)
             # Here self.data is a polars 
-
-
+        
         # z-score transformation
         if z_score:
             self.data = data_preprocessor.z_score(self.data)
             # Here self.data is a numpy 
-
-        # # Z transformation
-        # z = 1j
-
-        # if z_transform_mode == 'magnitude':
-        #     z_transformed, self.data, phase = data_preprocessor.z_transform(self.data, z)
-
-        # elif z_transform_mode == 'phase':
-        #     z_transformed, magnitude, self.data = data_preprocessor.z_transform(self.data, z)
-
+        
         ## Compute Data and Quadrs
-        self.numbers = self.data[:,3:]
-        self.rest = self.data[:,:3]
+        self.numbers = self.data[:,4:]
+        self.rest = self.data[:,:4]
 
         self.m = np.size(self.numbers, 0)
         self.d = np.size(self.numbers, 1)

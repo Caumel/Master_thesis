@@ -1,0 +1,13 @@
+Path,Box-cox,Z-normalization,Z-score,Windmill are excluded,Clusters Purity,Rand Index,Information Criterion,Error Type,how_to_process_data, kind_mean, tries, steps
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
+../../../data/final_files/small,False,True,True,,59.60000000000001,0.4263894631543848,0.4704351964114629,total,all,all,1,2
+../../../data/final_files/small,False,True,True,,66.7,0.4708460597977103,0.4384092949891104,total,all,all,99,75
+../../../data/final_files/medium,False,True,True,,70.79285714285714,0.5184745033210199,0.4466146974290425,total,all,all,99,75

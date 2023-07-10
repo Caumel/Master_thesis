@@ -127,7 +127,12 @@ class ICmodelBuilder:
         elif mode == 'ordinary':
             XtX = np.matmul(data[:, a].transpose(), data[:, a])
             XtY = np.matmul(data[:, a].transpose(), data[:, predicted_attr_num])
-        XtX_inverse = np.linalg.inv(XtX)
+        # TODO:
+        #   # I compute the pseudoinverse but is not the same, lets check
+        try:
+            XtX_inverse = np.linalg.inv(XtX)
+        except:
+            XtX_inverse = np.linalg.pinv(XtX)
         parameters = np.matmul(XtX_inverse, XtY)
         return parameters
 

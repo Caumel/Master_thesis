@@ -99,7 +99,7 @@ class DataPreprocessor:
         data_temporal = data.drop("time").to_numpy()
         dimensions = np.size(data_temporal, 1)
         data_temporal = self.shift_to_positive(data_temporal)
-        for col in range(3,dimensions):
+        for col in range(4,dimensions):
             try:
                 info, lambda_box_cox = stats.boxcox(data_temporal[:, col])
                 data.with_column(pl.Series(list_columns[col], info))
@@ -182,12 +182,12 @@ class DataPreprocessor:
         Applies z-normalization.
         """
         list_columns = data.columns
-        data_temporal = data[:,3:]
+        data_temporal = data[:,4:]
         scaler = StandardScaler()
         scaler.fit(data_temporal)
         z_normalized_data = scaler.transform(data_temporal)
         for col in range(0,data_temporal.shape[1]):
-            data.with_column(pl.Series(list_columns[col+3], z_normalized_data[col]))
+            data.with_column(pl.Series(list_columns[col+4], z_normalized_data[col]))
 
         return data
     
@@ -195,8 +195,8 @@ class DataPreprocessor:
         """
         Applies z-score transformation.
         """
-        numbers = data.to_numpy()[:,3:].astype(float)
-        rest = data.to_numpy()[:,:3]
+        numbers = data.to_numpy()[:,4:].astype(float)
+        rest = data.to_numpy()[:,:4]
         numbers_update = stats.zscore(numbers, axis=None)
         data = np.hstack((rest, numbers_update))
 
@@ -207,8 +207,8 @@ class DataPreprocessor:
         Applies Z transform.
         """
 
-        numbers = data[:,3:]
-        rest = data[:,:3]
+        numbers = data[:,4:]
+        rest = data[:,:4]
 
 
         d = np.size(numbers, 1)

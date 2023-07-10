@@ -1,0 +1,5 @@
+scp -r ./Master/Thesis/Master_thesis/src/ morales@kallisto.dm.univie.ac.at:/thesis
+ssh kallisto
+nano ~/.ssh/config
+
+password: P8OyfMSB#qDQDG1_B.yBl

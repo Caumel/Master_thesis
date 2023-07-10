@@ -117,7 +117,6 @@ class Cluster:
             filename = f"coeffs_{i + 1}"
 
             np.savetxt(
-                # fr"I:\University of Vienna\4 term\Master Thesis\Datasets\Main\coeffs\{filename}.txt",
                 fr"{filename}.txt",
                 concat_models, fmt='%.3f')
 

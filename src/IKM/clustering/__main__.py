@@ -1,6 +1,7 @@
 from ikm.clust.ikm import IKM
 from ikm.clust.dim_selection import Algorithm
 from another_clustering import coeffs_clustering
+import os
 
 
 # clust_mtd can be ikm or other
@@ -20,11 +21,7 @@ def diff_el_positions_clust(clust_mtd='ikm'):
     hilbert = [None, 'phase', 'amplitude']
     error = ['eucl', 'total', 'max', 'jaccard', 'hamming']
 
-    loading_setups = ['one_f', 'two_f']
-    # paths = ["/media/data/lazarenkom98dm/objects-first-visit-full",
-    #          "/media/data/lazarenkom98dm/objects-second-visit-full"]
-
-    paths = ["data/dataset_split_events"]
+    path = "data/final_files"
 
     ikm = IKM()
 
@@ -38,31 +35,17 @@ def diff_el_positions_clust(clust_mtd='ikm'):
                             for band in band:
                                 for hilbert in hilbert:
                                     for error in error:
-                                        for loading_setup in loading_setups:
-                                            if loading_setup == 'one_f':
-                                                for path in paths:
-                                                    ikm.ikm_process(path=path, loading_setup=loading_setup,
-                                                                    z_score=z_sc, box_cox=bc,
-                                                                    z_normalization=z_norm,
-                                                                    z_transform_mode=z_transform_mode,
-                                                                    excl_wm=excl_wm,
-                                                                    band=band,
-                                                                    hilbert=hilbert, error=error,
-                                                                    report_name='report')
-                                            elif loading_setup == 'two_f':
-                                                ikm.ikm_process(path=paths[0], path1=paths[1],
-                                                                loading_setup=loading_setup, z_score=z_sc,
-                                                                box_cox=bc,
-                                                                z_normalization=z_norm,
-                                                                z_transform_mode=z_transform_mode,
-                                                                excl_wm=excl_wm,
-                                                                band=band,
-                                                                hilbert=hilbert, error=error,
-                                                                report_name='report')
+                                        ikm.ikm_process(path=path,
+                                                        z_score=z_sc, box_cox=bc,
+                                                        z_normalization=z_norm,
+                                                        z_transform_mode=z_transform_mode,
+                                                        excl_wm=excl_wm,
+                                                        band=band,
+                                                        hilbert=hilbert, error=error,
+                                                        report_name='report')
 
                                             # if clust_mtd == 'ikm':
-                                            #
-                                            #     ikm.ikm_process(excl_wm =True, path=paths[0], path1=paths[1], loading_setup = 'one_f', error='hamming')
+                                            #     ikm.ikm_process(excl_wm =True, path=path, error='hamming')
                                             # elif clust_mtd == 'other':
                                             #     coeffs_clustering.cluster_coeffs_chosen_el(set_expl=report_name)
                                             # report_name = ''
@@ -75,34 +58,20 @@ def diff_el_positions_clust(clust_mtd='ikm'):
                             for band in band:
                                 for hilbert in hilbert:
                                     for error in error:
-                                        for loading_setup in loading_setups:
-                                            if loading_setup == 'one_f':
-                                                for path in paths:
-                                                    ikm.ikm_process(path=path, loading_setup=loading_setup,
-                                                                    z_score=z_sc, box_cox=bc,
-                                                                    z_normalization=z_norm,
-                                                                    z_transform_mode=z_transform_mode,
-                                                                    excl_wm=excl_wm,
-                                                                    band=band,
-                                                                    hilbert=hilbert, error=error,
-                                                                    report_name='report')
-                                            elif loading_setup == 'two_f':
-                                                ikm.ikm_process(path=paths[0], path1=paths[1],
-                                                                loading_setup=loading_setup, z_score=z_sc,
-                                                                box_cox=bc,
-                                                                z_normalization=z_norm,
-                                                                z_transform_mode=z_transform_mode,
-                                                                excl_wm=excl_wm,
-                                                                band=band,
-                                                                hilbert=hilbert, error=error,
-                                                                report_name='report')
+                                        ikm.ikm_process(path=path,
+                                                        z_score=z_sc, box_cox=bc,
+                                                        z_normalization=z_norm,
+                                                        z_transform_mode=z_transform_mode,
+                                                        excl_wm=excl_wm,
+                                                        band=band,
+                                                        hilbert=hilbert, error=error,
+                                                        report_name='report')
                                                     
     except Exception:
         pass
 
         # if clust_mtd == 'ikm':
-        #
-        #     ikm.ikm_process(excl_wm=True, path=paths[0], path1=paths[1], loading_setup='two_f')
+        #     ikm.ikm_process(excl_wm=True, path=path)
         # elif clust_mtd == 'other':
         #     coeffs_clustering.cluster_coeffs_chosen_el(set_expl=report_name)
         # report_name = ''
@@ -115,42 +84,32 @@ def main():
 
     ikm = IKM()
 
-    # paths = ["/media/data/lazarenkom98dm/objects-first-visit-full",
-    #          "/media/data/lazarenkom98dm/objects-second-visit-full"]
-    paths = ["../../../data/dataset_split_events"]
-    loading_setup = "one_f"
+    path = "../../../data/final_files/medium"
+
     num_clusters = 2
     # hilbert = "amplitude" / "phase"
 
     errors = ['total', 'max', 'jaccard', 'hamming']
 
-    # for error in errors:
-    #     ikm.ikm_process(path=paths[0], 
-    #                     path1=paths[1], 
-    #                     loading_setup="two_f",
-    #                     band='delta', 
-    #                     num_clusters = num_clusters, 
-    #                     error=error,
-    #                     report_name='report')
-        
     for error in errors:
-        ikm.ikm_process(path=paths[0],
-                        # path1=paths[1], 
-                        loading_setup=loading_setup,
-                        band='delta', 
-                        hilbert='amplitude',
+        ikm.ikm_process(path=path,
                         num_clusters = num_clusters,
                         # excl_wm = [],
                         # specific_windmills=1,
 
                         z_score=True,
                         z_normalization=True, 
-                        box_cox=True,
-                        z_transform_mode = "magnitude",
+                        box_cox=False, # TODO: Ask Katerina is we should use this transformation as we have negative values.
 
                         error=error,
-                        report_name='report')
+                        report_name='report',
+                        
+                        how_to_process_data = "all",
+                        kind_mean="all",
+                        tries = 100, 
+                        steps = 75)
         
+        # TODO: Borrar break
         break
 
 

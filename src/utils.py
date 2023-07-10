@@ -394,22 +394,25 @@ def generate_datasets(df, range_cut):
 def join_datasets(list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events, windfarm, pressure, df_high, df_low, df_moderate):
 
     # Save high events
-    for index,df in enumerate(list_high_extreme_events):
-        list_high_extreme_events[index] = df.with_columns(pl.lit(index).alias('n_event'))
-    df_high_speed = pl.concat(list_high_extreme_events, rechunk=True)
-    df_high = pl.concat([df_high, df_high_speed], rechunk=True)
+    if len(list_high_extreme_events) != 0:
+        for index,df in enumerate(list_high_extreme_events):
+            list_high_extreme_events[index] = df.with_columns(pl.lit(index).alias('n_event'))
+        df_high_speed = pl.concat(list_high_extreme_events, rechunk=True)
+        df_high = pl.concat([df_high, df_high_speed], rechunk=True)
 
     # Save low events
-    for index,df in enumerate(list_low_extreme_events):
-        list_low_extreme_events[index] = df.with_columns(pl.lit(index).alias('n_event'))
-    df_low_speed = pl.concat(list_low_extreme_events, rechunk=True)
-    df_low = pl.concat([df_low, df_low_speed], rechunk=True)
+    if len(list_low_extreme_events) != 0:
+        for index,df in enumerate(list_low_extreme_events):
+            list_low_extreme_events[index] = df.with_columns(pl.lit(index).alias('n_event'))
+        df_low_speed = pl.concat(list_low_extreme_events, rechunk=True)
+        df_low = pl.concat([df_low, df_low_speed], rechunk=True)
 
     # Save moderate events
-    for index,df in enumerate(list_moderate_extreme_events):
-        list_moderate_extreme_events[index] = df.with_columns(pl.lit(index).alias('n_event'))
-    df_moderate_speed = pl.concat(list_moderate_extreme_events, rechunk=True)
-    df_moderate = pl.concat([df_moderate, df_moderate_speed], rechunk=True)
+    if len(list_moderate_extreme_events) != 0:
+        for index,df in enumerate(list_moderate_extreme_events):
+            list_moderate_extreme_events[index] = df.with_columns(pl.lit(index).alias('n_event'))
+        df_moderate_speed = pl.concat(list_moderate_extreme_events, rechunk=True)
+        df_moderate = pl.concat([df_moderate, df_moderate_speed], rechunk=True)
 
     return df_high, df_low, df_moderate
 
@@ -434,11 +437,11 @@ def get_datasets_per_pressure(df,pressure,range_cut):
         # list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events = find_extreme_events_high_low_moredate(df_windfarm,df_high_speed,df_low_speed,df_moderate_speed,range_cut)
         list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events = generate_datasets(df_windfarm, range_cut)
 
-        # print(len(list_high_extreme_events))
-        # print(len(list_low_extreme_events))
-        # print(len(list_moderate_extreme_events))
+        print("lista de eventos",len(list_high_extreme_events),len(list_low_extreme_events),len(list_moderate_extreme_events))
 
         df_high, df_low, df_moderate = join_datasets(list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events, windfarm, pressure, df_high, df_low, df_moderate)
+
+        print("df total",df_high.shape, df_low.shape, df_moderate.shape)
 
     return df_high, df_low, df_moderate
 
@@ -453,7 +456,7 @@ def get_datasets(df,range_cut, path, year):
 
     # for index,df_pressure in enumerate([df_900, df_925, df_950, df_975, df_1000]):
     for index,df_pressure in enumerate([df_925]):
-        print(pressures[index])
+        # print(pressures[index])
         df_high, df_low, df_moderate = get_datasets_per_pressure(df_pressure,pressures[index],range_cut)
         save_datasets(df_high, df_low, df_moderate, path, year, range_cut)
 
