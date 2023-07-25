@@ -110,17 +110,22 @@ class Cluster:
             # result_string += f"Age: <=49 -- {less_49} >49 -- {bigger_49}\n"
 
             models_list = []
-            for m in self.cluster_models[i]:
-                models_list.append(m.model.transpose())
+            try:
+                for m in self.cluster_models[i]:
+                    models_list.append(m.model.transpose())
+                    concat_models = np.vstack(models_list)
+            except Exception as e:
+                print("cluster file",e)
+                concat_models = np.zeros(0)
 
-            concat_models = np.vstack(models_list)
             filename = f"coeffs_{i + 1}"
 
             np.savetxt(
                 fr"{filename}.txt",
                 concat_models, fmt='%.3f')
 
-            for m in range(len(self.cluster_models[i])):
+
+        for m in range(len(0 if self.cluster_models[i] == None else self.cluster_models[i])):
                 result_string += (self.cluster_models[i][m].__str__(m) + "\n")
         return result_string
 

@@ -17,7 +17,7 @@ class IKM:
     def ikm_process(self,box_cox=None, z_normalization=None,z_score=None, excl_wm=None,path=None,
                     report_name='report', num_clusters=2, error='eucl', specific_windmills=None, windmills=None,
                     how_to_process_data = "all", kind_mean = "all",
-                    tries = 100, steps = 75):
+                    tries = 100, steps = 75, samples_per_file=10):
         """
             This function runs IKM algorithm.
             Parameters:
@@ -58,7 +58,8 @@ class IKM:
                                                         specific_windmills, 
                                                         windmills,
                                                         how_to_process_data,
-                                                        kind_mean)
+                                                        kind_mean,
+                                                        samples_per_file)
         
         # print(df)
 

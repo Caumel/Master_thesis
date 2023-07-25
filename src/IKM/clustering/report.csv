@@ -1,13 +1,13 @@
 Path,Box-cox,Z-normalization,Z-score,Windmill are excluded,Clusters Purity,Rand Index,Information Criterion,Error Type,how_to_process_data, kind_mean, tries, steps
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/96,False,True,True,,50.0,0.5151515151515151,-4.725204586111104e-16,total,all,all,1,2
-../../../data/final_files/small,False,True,True,,59.60000000000001,0.4263894631543848,0.4704351964114629,total,all,all,1,2
-../../../data/final_files/small,False,True,True,,66.7,0.4708460597977103,0.4384092949891104,total,all,all,99,75
-../../../data/final_files/medium,False,True,True,,70.79285714285714,0.5184745033210199,0.4466146974290425,total,all,all,99,75
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.4363636363636363,-3.506645332921042e-16,total,all,all,19,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.4363636363636363,-3.506645332921042e-16,total,all,all,19,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.4363636363636363,-3.506645332921042e-16,total,all,all,19,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.4363636363636363,-3.506645332921042e-16,total,all,all,19,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.3645875251509054,-4.617906177860808e-16,total,all,all,19,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.372635814889336,-4.617906177860808e-16,max,all,all,19,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.3645875251509054,-4.617906177860808e-16,total,all,all,4,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.358148893360161,-4.617906177860808e-16,max,all,all,4,5
+../../../data/final_files/small,False,True,True,,100.0,1.0,-4.753726947797895e-16,jaccard,all,all,4,5
+../../../data/final_files/small,False,True,True,,100.0,1.0,-4.753726947797894e-16,jaccard,all,all,4,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.4985915492957746,-4.617906177860808e-16,eucl,all,all,4,5
+../../../data/final_files/small,False,True,True,,33.33333333333333,0.3645875251509054,-4.617906177860808e-16,total,all,all,4,5

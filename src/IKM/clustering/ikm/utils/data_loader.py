@@ -18,7 +18,8 @@ class DataLoader:
         self.delimiter = delimiter
 
     def load_data_one_file(self, box_cox=None, z_normalization=None, z_score=None, excl_wm=None,path=None,
-                           specific_windmills=None, windmills=None, how_to_process_data="all",kind_mean="all"):
+                           specific_windmills=None, windmills=None, how_to_process_data="all",kind_mean="all",
+                           samples_per_file = 10):
         """
         Loads the depressed patients data from one visit.
         """
@@ -57,7 +58,7 @@ class DataLoader:
                             windmills=windmills,
                             kind_mean=kind_mean)
             
-                events, df_events = self.split_events(object,class_event)
+                events, df_events = self.split_events(object,class_event,samples_per_file)
 
                 df = pd.concat([df, df_events])
 
@@ -68,6 +69,7 @@ class DataLoader:
             #   Aqui hay que quitar el break y para leer todos los ficheros
             #   Tambien hay que ver para que usa el df y el tercer elemento
 
+            break
             # Df [ file, data, something ?]
 
         return df, objects
@@ -89,7 +91,7 @@ class DataLoader:
 
         return list_windmill
     
-    def split_events(self,TSO_data,class_event):
+    def split_events(self,TSO_data,class_event,samples_per_file):
 
         # Columns time,index,n_event,year,cc,o3,pv,cape,blh,d2m,z,relative_humidity,t2m,t100m,t135m,wdir100m,wspeed135m,wspeed100m
 
@@ -102,7 +104,7 @@ class DataLoader:
 
         # Split the array into a list of lists based on categories
         df = pd.DataFrame(columns=['ID', 'index', 'n_event', 'year', 'Date_init', 'Date_end', 'Data','Response'])
-        for category in tqdm(unique_categories, desc='Split events, and create TSObject', leave=False):
+        for index,category in enumerate(tqdm(unique_categories, desc='Split events, and create TSObject', leave=False)):
             # Select the one event in a big dataframe
             indices = np.where(categories == category)
             subset = np.array(TSO_data.data[indices])
@@ -115,6 +117,7 @@ class DataLoader:
 
             # TODO:
             #   - We only take 1 event (for test the results.)
-            # break
+            if samples_per_file != None and index == samples_per_file:
+                break
 
         return list_events, df

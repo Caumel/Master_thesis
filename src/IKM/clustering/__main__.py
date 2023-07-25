@@ -84,14 +84,17 @@ def main():
 
     ikm = IKM()
 
-    path = "../../../data/final_files/medium"
+    path = "../../../data/final_files/small"
 
-    num_clusters = 2
+    num_clusters = 3
     # hilbert = "amplitude" / "phase"
 
-    errors = ['total', 'max', 'jaccard', 'hamming']
+    errors = ['total', 'max', 'jaccard','eucl']
+    errors = ['total']
+
 
     for error in errors:
+        print(error)
         ikm.ikm_process(path=path,
                         num_clusters = num_clusters,
                         # excl_wm = [],
@@ -106,11 +109,11 @@ def main():
                         
                         how_to_process_data = "all",
                         kind_mean="all",
-                        tries = 100, 
-                        steps = 75)
+                        tries = 5, 
+                        steps = 5,
+                        samples_per_file = 70)
         
         # TODO: Borrar break
-        break
 
 
 if __name__ == '__main__':
