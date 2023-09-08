@@ -48,7 +48,12 @@ class TSObject:
         # z-score transformation
         if z_score:
             self.data = data_preprocessor.z_score(self.data)
-            # Here self.data is a numpy 
+            # Here self.data is a numpy
+        
+        if not z_normalization and not z_score:
+            self.data = data_preprocessor.no_process(self.data)
+
+
         
         ## Compute Data and Quadrs
         self.numbers = self.data[:,4:]

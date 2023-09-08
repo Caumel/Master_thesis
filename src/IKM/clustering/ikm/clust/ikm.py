@@ -17,7 +17,7 @@ class IKM:
     def ikm_process(self,box_cox=None, z_normalization=None,z_score=None, excl_wm=None,path=None,
                     report_name='report', num_clusters=2, error='eucl', specific_windmills=None, windmills=None,
                     how_to_process_data = "all", kind_mean = "all",
-                    tries = 100, steps = 75, samples_per_file=10):
+                    tries = 100, steps = 75, samples_per_file=10, path_save_file_per_event="./"):
         """
             This function runs IKM algorithm.
             Parameters:
@@ -59,7 +59,8 @@ class IKM:
                                                         windmills,
                                                         how_to_process_data,
                                                         kind_mean,
-                                                        samples_per_file)
+                                                        samples_per_file,
+                                                        path_save_file_per_event)
         
         # print(df)
 
@@ -110,8 +111,10 @@ class IKM:
             cl_error = cl.error(error)
             if min_error > cl_error:
                 min_error = cl_error
-                best_cl = cl.__str__()
+                best_cl = cl.__str__(error)
                 best_clusters = cl.init_best_clusters()
+
+        
 
         df = Cluster.label_clusters(df, k, best_clusters)
 
@@ -125,22 +128,25 @@ class IKM:
 
         label = 'Response'
         clusters_purity = metrics.purity(df, label=label)
+        clusters_purity_2 = metrics.purity_2(df, label=label)
         rand_index = metrics.rand_index(df, label=label)
         information_criterion = metrics.information_criterion(df, label=label)
 
         print(
-            f"Best clustering:\n{best_cl}\n"
             f"Clusters purity:\n{clusters_purity}\n"
+            f"Clusters purity 2:\n{clusters_purity_2}\n"
             f"Rand index:{rand_index}\n"
             f"Information criterion: {information_criterion}"
         )
 
-        final_str += f"Box-cox:{box_cox}\n" \
+        final_str += f"\n" \
+                     f"Box-cox:{box_cox}\n" \
                      f"Z-normalization:{z_normalization}\n" \
                      f"Z-score:{z_score}\n" \
                      f"Windmill are excluded:{excl_wm}\n" \
-                     f"Best clustering:\n{best_cl}\n" \
+                     f"Best clustering:\n" \
                      f"Clusters purity:\n{clusters_purity}\n" \
+                     f"Clusters purity 2:\n{clusters_purity_2}\n" \
                      f"Rand index:{rand_index}\n" \
                      f"Information criterion: {information_criterion}\n" \
                      f"How to process data: {how_to_process_data}\n" \
@@ -159,8 +165,21 @@ class IKM:
         df.to_csv("report.csv", index=False)
 
         file_path = fr'{report_name}.txt'
+
+        # Safe file information
         file = open(os.path.join(file_path), 'a')
         file.write(final_str)
+        file.close()
+
+        # Safe file split files
+
+        file_path = fr'cluster_split_{error}.txt'
+
+        if os.path.exists(file_path):
+            os.remove(file_path)
+
+        file = open(os.path.join(file_path), 'a')
+        file.write(best_cl)
         file.close()
 
         print()

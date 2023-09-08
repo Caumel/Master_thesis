@@ -230,6 +230,12 @@ class DataPreprocessor:
         phase = np.hstack((rest, phase))
 
         return z_transformed, magnitude, phase
+    
+    def no_process(self,data):
+        numbers = data.to_numpy()[:,4:].astype(float)
+        rest = data.to_numpy()[:,:4]
+        data = np.hstack((rest, numbers))
+        return data
 
     def compute_data(self, data, dimensions, numb_data_points):
         """

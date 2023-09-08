@@ -4,7 +4,7 @@ from ikm.clust import IC_model_builder
 class ModelsErrors:
     errors_in_models = []
 
-    def models_errors(self, models, objects, cluster_number, error):
+    def models_errors(self, models, objects, cluster_number, error, text):
         """
         Calculates errors in the models using leave-one-out cross-validation.
         """
@@ -27,10 +27,21 @@ class ModelsErrors:
                     min_index = i
 
             err_true = errors[cluster_number]
-            err_false = errors[(cluster_number + 1) % 2]
-            err_r_f_diff = err_true - err_false
-            print(f"{object_} ==> {cluster_number == min_index}  {err_r_f_diff}  {err_true}  {err_false}")
+            if cluster_number == 0:
+                err_false_1 = errors[(cluster_number + 1)]
+                err_false_2 = errors[(cluster_number + 2)]
+            elif cluster_number == 1:
+                err_false_1 = errors[(cluster_number - 1)]
+                err_false_2 = errors[(cluster_number + 1)]
+            else:
+                err_false_1 = errors[(cluster_number - 2)]
+                err_false_2 = errors[(cluster_number - 1)]
+            err_r_f_diff_1 = err_true - err_false_1
+            err_r_f_diff_2 = err_true - err_false_2
+
+            # print(f"{object_} ==> {cluster_number == min_index}  {err_true}  {err_false_1} {err_r_f_diff_1} {err_false_2} {err_r_f_diff_1}")
+            text += f"{object_} ==> {cluster_number == min_index}  {err_true}  {err_false_1} {err_r_f_diff_1} {err_false_2} {err_r_f_diff_2}\n"
             if cluster_number != min_index:
                 result += 1
 
-        return result
+        return result, text

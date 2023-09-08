@@ -84,19 +84,17 @@ def main():
 
     ikm = IKM()
 
-    path = "../../../data/final_files/small"
+    path = "../../../data/normal_13"
+    path_save_file_per_event = "../../../data/file_per_event/current_experiment"
 
-    num_clusters = 3
-    # hilbert = "amplitude" / "phase"
-
-    errors = ['total', 'max', 'jaccard','eucl']
+    # errors = ['total','eucl', 'max', 'jaccard']
     errors = ['total']
 
 
     for error in errors:
         print(error)
         ikm.ikm_process(path=path,
-                        num_clusters = num_clusters,
+                        num_clusters = 3,
                         # excl_wm = [],
                         # specific_windmills=1,
 
@@ -109,9 +107,10 @@ def main():
                         
                         how_to_process_data = "all",
                         kind_mean="all",
-                        tries = 5, 
-                        steps = 5,
-                        samples_per_file = 70)
+                        tries = 50, #100
+                        steps = 25, #75
+                        samples_per_file = None, # Number of samples ( nº or None )
+                        path_save_file_per_event = path_save_file_per_event) 
         
         # TODO: Borrar break
 

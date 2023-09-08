@@ -76,7 +76,7 @@ class Cluster:
         """
         return self.clusters
 
-    def __str__(self):
+    def __str__(self,error=""):
         """
         Outputs one clustering run results.
         """
@@ -118,14 +118,18 @@ class Cluster:
                 print("cluster file",e)
                 concat_models = np.zeros(0)
 
-            filename = f"coeffs_{i + 1}"
+            filename = f"coeffs_{i + 1}_{error}"
 
             np.savetxt(
                 fr"{filename}.txt",
                 concat_models, fmt='%.3f')
 
 
-        for m in range(len(0 if self.cluster_models[i] == None else self.cluster_models[i])):
+        # print(self.cluster_models[i])
+
+        result_string += f"Coefficients\n"
+        for m in range(len(self.cluster_models[i])):
+        # for m in range(len(0 if self.cluster_models[i] == None else self.cluster_models[i])):
                 result_string += (self.cluster_models[i][m].__str__(m) + "\n")
         return result_string
 

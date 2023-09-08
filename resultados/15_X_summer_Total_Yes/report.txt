@@ -1,0 +1,17 @@
+
+Box-cox:False
+Z-normalization:True
+Z-score:True
+Windmill are excluded:None
+Best clustering:
+Clusters purity:
+45.67854118059484
+Clusters purity 2:
+45.73571548963425
+Rand index:0.5368947353008685
+Information criterion: 0.44464515622291134
+How to process data: all
+Kind of mean: all
+Tries: 49
+Steps: 25
+Time: 29790.932792663574

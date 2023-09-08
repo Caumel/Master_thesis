@@ -17,8 +17,8 @@ class Metrics:
         for i in cluster_values:
             if i == -1:
                 continue
-            df = df_main[df_main['Cluster'] == i].copy()
-            frequent_value = df[label].value_counts().idxmax()
+            df = df_main[df_main['Cluster'] == i].copy() # Cojo el cluster i
+            frequent_value = df[label].value_counts().idxmax() 
             num_frequent_value_cluster = df[label].value_counts().max()
             num_frequent_value_overall = (df_main[label].values == frequent_value).sum()
             cp = num_frequent_value_cluster / num_frequent_value_overall
@@ -27,6 +27,31 @@ class Metrics:
         if not cps:
             return 0
         return (sum(cps) / len(cps)) * 100
+    
+    def purity_2(self, df_main, label):
+        """
+        Calculates clusters purity.
+        """
+
+        # Sum of correctly assigned instances
+        correct = 0
+        # Total instances
+        total = len(df_main)
+
+        cluster_values = df_main['Cluster'].unique().tolist()
+
+        for i in cluster_values:
+            if i == -1:  # Ignore noise if any (often in DBSCAN)
+                continue
+
+            df = df_main[df_main['Cluster'] == i].copy()
+            # Most frequent class in the cluster
+            num_frequent_value_cluster = df[label].value_counts().max()
+            
+            # Add the count of the most frequent class in this cluster to the correct count
+            correct += num_frequent_value_cluster
+
+        return (correct / total) * 100
 
     def rand_index(self, df, label):
 
