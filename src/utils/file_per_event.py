@@ -3,11 +3,8 @@ import numpy as np
 import os
 from tqdm import tqdm
 
-url_data = "./data"
-os.chdir('../')
-
-path = "./data/final_files/small/"
-path_save_file_per_event = "./data/file_per_event/current_experiment"
+path = "../../data/final_files/small/"
+path_save_file_per_event = "../../data/file_per_event/current_experiment"
 
 def create_files_per_event(event,name,path):
 

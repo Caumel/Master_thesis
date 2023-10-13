@@ -1,6 +1,6 @@
 import numpy as np
 
-from ikm.utils.data_preprocessor import DataPreprocessor
+from src.IKM.clustering.ikm.utils.data_preprocessor import DataPreprocessor
 from tqdm import tqdm
 
 
@@ -52,8 +52,6 @@ class TSObject:
         
         if not z_normalization and not z_score:
             self.data = data_preprocessor.no_process(self.data)
-
-
         
         ## Compute Data and Quadrs
         self.numbers = self.data[:,4:]

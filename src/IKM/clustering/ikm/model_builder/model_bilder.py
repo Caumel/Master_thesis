@@ -1,7 +1,6 @@
 import numpy as np
 
-from ikm.clust.IC_model_builder import ICmodelBuilder
-
+from src.IKM.clustering.ikm.clust.IC_model_builder import ICmodelBuilder
 
 class ModelBilder:
 

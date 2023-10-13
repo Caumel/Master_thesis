@@ -1,5 +1,12 @@
 Path,Box-cox,Z-normalization,Z-score,Windmill are excluded,Clusters Purity,Rand Index,Information Criterion,Error Type,how_to_process_data, kind_mean, tries, steps
-../../../data/final_files/small,False,True,True,,81.81818181818183,0.8011363636363636,0.3666665070846571,total,all,all,4,5
-../../../data/final_files/small,False,True,True,,81.81818181818183,0.8011363636363636,0.3666665070846571,total,all,all,4,5
-../../../data/final_files/small,False,True,True,,81.81818181818183,0.8011363636363636,0.3666665070846571,total,all,all,4,5
-../../../data/final_files/small,False,True,True,,81.81818181818183,0.8011363636363636,0.36666650708465715,total,all,all,4,5
+../../../data/normal,False,True,True,,48.28456254968433,0.5774957640435321,0.4422154483341979,total,all,all,49,25
+../../../data/normal,False,False,False,,41.30988185438318,0.5524644987998506,0.460380322317156,total,all,all,49,25
+../../../data/summer,False,True,True,,45.67854118059484,0.5368947353008685,0.4446451562229113,total,all,all,49,25
+../../../data/winter,False,True,True,,42.14679606056792,0.5547307294545042,0.4617488184462231,total,all,all,49,25
+../../../data/normal_13,False,True,True,,50.80483255216336,0.5787788870476467,0.4258564130331159,total,all,all,49,25
+../../../data/final_files/small,False,True,True,,55.91397849462365,0.5853202431042543,0.471718476841954,total,all,all,1,2
+../../../data/final_files/small,False,True,True,,47.96747967479676,0.5643076102892176,0.4842381793873428,total,all,all,1,2
+../../../data/final_files/small,False,True,True,,60.97560975609756,0.6592029854724777,0.4002402587861541,eucl,all,all,1,2
+../../../data/final_files/small,False,True,True,,46.34146341463414,0.5635079301612689,0.5252067437459114,eucl,all,all,1,2
+../../../data/final_files/small,False,True,True,,65.85365853658537,0.703718512594962,0.3688018844387735,eucl,all,all,1,2
+../../../data/final_files/normal_summer,False,True,True,,64.22764227642276,0.6640010662401706,0.4206200847073241,eucl,all,all,1,2

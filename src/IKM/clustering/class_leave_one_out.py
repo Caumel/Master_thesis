@@ -4,15 +4,19 @@ import os
 import numpy as np
 import ntpath
 import polars as pl
+from tqdm import tqdm
 
-from ikm.model_builder import model_bilder
-from ikm.model_builder.time_series_object import TSObject
-from ikm.utils.models_errors import ModelsErrors
+import sys
+sys.path.append('../../../')
+
+from src.IKM.clustering.ikm.model_builder import model_bilder
+from src.IKM.clustering.ikm.model_builder.time_series_object import TSObject
+from src.IKM.clustering.ikm.utils.models_errors import ModelsErrors
 
 def create_list_events():
 
     path = "./"
-    file_clusters = "cluster_split.txt"
+    file_clusters = "cluster_split_eucl_ideal.txt"
 
     with open(os.path.join(path,file_clusters), 'r') as file:
         # Lee el contenido del archivo
@@ -64,7 +68,7 @@ def main():
     # Leer elementos y guardarlos en classes_
 
     class_number = len(objs)
-    for i in range(class_number): # Tomo cada array de cada cluster
+    for i in tqdm(range(class_number)): # Tomo cada array de cada cluster
         objs_cluster = objs[i] # cluster i
         number_objs += len(objs_cluster) # numero de elementos en total de todos los clusters
         objs_cluster.sort() # Ordeno
@@ -72,10 +76,11 @@ def main():
         class_ = []
         j = len(objs_cluster) - 1
         while j >= 0:
-            data = pl.read_csv(os.path.join(objs_cluster[j]))[:,4:]
+            data = pl.read_csv(os.path.join(objs_cluster[j]))
             # data = np.loadtxt(os.path.join(objs_cluster[j]), delimiter=' ', skiprows=1)
             filename = ntpath.basename(objs_cluster[j])
             class_.append(TSObject(file_name=filename, data=data,z_normalization=True, z_score=True))
+
             j = j - 1
         classes_.append(class_)
 
@@ -89,7 +94,7 @@ def main():
         text += "\n"
         text += f"Cluster: {cl}\n"
 
-        for obj_num_in_cluster in range(len(classes_[cl])): #Para cada elemento en el cluster cl de la lista classes_  [[],[],[]]
+        for obj_num_in_cluster in tqdm(range(len(classes_[cl]))): #Para cada elemento en el cluster cl de la lista classes_  [[],[],[]]
 
             mod_set = copy.deepcopy(classes_)
             test_set = []
@@ -101,7 +106,7 @@ def main():
                 training_mod_set.append(mod_set[i])
 
             class_models = []
-            for i in range(class_number): # Creo 10 modelos para cross-validation
+            for i in range(class_number): #Error para cada dimension
                 model = model_bilder.ModelBilder.create_model(mod_set[i], error)
                 class_models.append(model)
             
@@ -109,6 +114,8 @@ def main():
 
             result, text = model_error.models_errors(class_models, test_set, cl, error, text)
             errors[cl] += result
+
+    print(model_error)
 
     # Numero de errores por cluster.
 

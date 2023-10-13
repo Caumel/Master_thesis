@@ -1,5 +1,5 @@
 scp -r ./Master/Thesis/Master_thesis/src/ morales@kallisto.dm.univie.ac.at:/home/morales/thesis
-scp -r ./Master/Thesis/Master_thesis/data/final_files/96/high.csv morales@kallisto.dm.univie.ac.at:/home/morales/thesis/data/final_files/
+scp -r ./Master/Thesis/Master_thesis/data/final_files/normal_summer/* morales@kallisto.dm.univie.ac.at:/home/morales/thesis/data/
 ssh kallisto
 nano ~/.ssh/config
 

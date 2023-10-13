@@ -1,13 +1,17 @@
 import os
 import sys
+sys.path.append('../../../')
+
+from tqdm import tqdm
 
 import numpy as np
 import pandas as pd
+import polars as pl
 
-from ikm.clust.IC_model_builder import ICmodelBuilder
+from src.IKM.clustering.ikm.clust.IC_model_builder import ICmodelBuilder
 
-from ikm.model_builder.model_bilder import ModelBilder
-from ikm.model_builder.time_series_object import TSObject
+from src.IKM.clustering.ikm.model_builder.model_bilder import ModelBilder
+from src.IKM.clustering.ikm.model_builder.time_series_object import TSObject
 
 
 def medicaments_per_cluster():
@@ -169,5 +173,91 @@ def ideal_coeffs():
 
     print(result_string)
 
+def ideal_coeffs_2():
+    """
+    Computes coefficients for ideally separated clusters.
+    """
 
-ideal_coeffs()
+    k = 3
+    objs = [[] for i in range(k)]
+
+    path = "../../../data/final_files/small/"
+
+    error = 'eucl'
+
+    clusters = [[] for i in range(len(objs))]
+
+    for file in os.listdir(path):
+
+        data = pl.read_csv(os.path.join(path, file))
+
+        categories = np.array(['_'.join(str(item) for item in sublist) for sublist in data[:,1:4].rows()])
+
+        # Get unique categories
+        unique_categories = np.unique(categories)
+        np.random.shuffle(unique_categories)
+
+        # Split the array into a list of lists based on categories
+        for index,category in enumerate(tqdm(unique_categories, desc='Split events, and create TSObject', leave=False)):
+            # Select the one event in a big dataframe
+            indices = np.where(categories == category)
+            subset = data[indices[0]]
+
+            if file == "high_small.csv" and len(clusters[0]) <40:
+                clusters[0].append(TSObject(file_name=category, data=subset,z_normalization=True, z_score=True))
+            if file == "moderate_small.csv" and len(clusters[1]) <40:
+                clusters[1].append(TSObject(file_name=category, data=subset,z_normalization=True, z_score=True))
+            if file == "low_small.csv" and len(clusters[2]) <40:
+                clusters[2].append(TSObject(file_name=category, data=subset,z_normalization=True, z_score=True))
+
+    # Experimento, crear un ejemplo con 120 elementos
+
+    import random
+    for i,obj in enumerate(clusters):
+        selected_elements = random.sample(clusters[i], 40)
+        clusters[i] = selected_elements.copy()
+
+    cluster_models = []
+
+    print(len(clusters))
+
+    for i in range(k):
+        if len(clusters) > 0:
+            created_model = ModelBilder.create_model(clusters[i], error)
+            cluster_models.append(created_model)
+        else:
+            cluster_models.append(None)
+
+    result_string = ""
+    for i in range(k):
+        result_string += f"Cl#:{i}\n"
+
+        for j in range(len(clusters[i])):
+            result_string += str(clusters[i][j].name) + "\n"
+
+        models_list = []
+        for m in cluster_models[i]:
+            models_list.append(m.model.transpose())
+
+        concat_models = np.vstack(models_list)
+        filename = f"coeffs_{i + 1}_{error}_ideal"
+
+        np.savetxt(
+            fr"./{filename}.txt",
+            concat_models, fmt='%.3f')
+
+        # for m in range(len(cluster_models[i])):
+        #     result_string += (cluster_models[i][m].__str__(m) + "\n")
+
+    result_string += ("Coefficients" + "\n") #Para poder usar el cluster
+
+    print(result_string)
+
+    file_path = fr'cluster_split_{error}_ideal.txt'
+
+    # Safe file information
+    file = open(os.path.join(file_path), 'a')
+    file.write(result_string)
+    file.close()
+
+ideal_coeffs_2()

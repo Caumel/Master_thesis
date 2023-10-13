@@ -84,11 +84,11 @@ def main():
 
     ikm = IKM()
 
-    path = "../../../data/normal_13"
+    path = "../../../data/final_files/normal_summer"
     path_save_file_per_event = "../../../data/file_per_event/current_experiment"
 
     # errors = ['total','eucl', 'max', 'jaccard']
-    errors = ['total']
+    errors = ['eucl']
 
 
     for error in errors:
@@ -107,9 +107,9 @@ def main():
                         
                         how_to_process_data = "all",
                         kind_mean="all",
-                        tries = 50, #100
-                        steps = 25, #75
-                        samples_per_file = None, # Number of samples ( nº or None )
+                        tries = 2, #100
+                        steps = 2, #75
+                        samples_per_file = 40, # Number of samples ( nº or None )
                         path_save_file_per_event = path_save_file_per_event) 
         
         # TODO: Borrar break

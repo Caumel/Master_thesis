@@ -66,13 +66,6 @@ class DataLoader:
 
             # Concanet objects
             objects.extend(events)
-            
-            # TODO:
-            #   Aqui hay que quitar el break y para leer todos los ficheros
-
-            # break
-
-            # Df ['ID', 'index', 'n_event', 'year', 'Date_init', 'Date_end', 'Data','Response']
 
         return df, objects
     
@@ -102,16 +95,17 @@ class DataLoader:
         list_events = []
 
         categories = np.array(['_'.join(str(item) for item in sublist) for sublist in data[:,1:4].rows()])
+        updated_list = np.array([test + "_" + str(class_event) for test in categories])
 
         # Get unique categories
-        unique_categories = np.unique(categories)
+        unique_categories = np.unique(updated_list)
         np.random.shuffle(unique_categories)
 
         # Split the array into a list of lists based on categories
         df = pd.DataFrame(columns=['ID', 'index', 'n_event', 'year', 'Date_init', 'Date_end', 'Data','Response'])
         for index,category in enumerate(tqdm(unique_categories, desc='Split events, and create TSObject', leave=False)):
             # Select the one event in a big dataframe
-            indices = np.where(categories == category)
+            indices = np.where(updated_list == category)
             subset = data[indices[0]]
 
             # Create TSObject with this event
@@ -129,7 +123,7 @@ class DataLoader:
                 
             list_events.append(time_series)
 
-            # self.create_files_per_event(subset,category,path_save_file_per_event)
+            self.create_files_per_event(subset,category,path_save_file_per_event)
 
             # break
 

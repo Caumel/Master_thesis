@@ -1,2 +1,0 @@
-Path,Box-cox,Z-normalization,Z-score,Windmill are excluded,Clusters Purity,Rand Index,Information Criterion,Error Type,how_to_process_data, kind_mean, tries, steps
-../../../data/normal,False,True,True,,48.28456254968433,0.5774957640435321,0.4422154483341979,total,all,all,49,25

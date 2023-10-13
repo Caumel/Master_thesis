@@ -201,7 +201,7 @@ def plot_date_range(df,start_date,end_date):
 #                                                #
 ##################################################
 
-def generate_dataset_by_windows(df,range_cut,percentage=0.2):
+def generate_dataset_by_windows(df,range_cut,percentage=0.2, percentage_low_mod=0.8):
 
     high_extreme_events = []
     low_extreme_events = []
@@ -223,19 +223,19 @@ def generate_dataset_by_windows(df,range_cut,percentage=0.2):
 
         if df_high_speed.shape[0] >= range_cut * percentage:
             high_extreme_events.append(cut_df)
-        # elif df_high_speed.shape[0] >= 1 and df_high_speed.shape[0] + df_moderate_speed.shape[0] >= range_cut * percentage:
-        #     high_extreme_events.append(cut_df)
-        if df_low_speed.shape[0] >= range_cut * percentage:
+        if df_low_speed.shape[0] >= range_cut * percentage_low_mod:
             low_extreme_events.append(cut_df)
-        if df_moderate_speed.shape[0] >= range_cut * percentage:
+        if df_moderate_speed.shape[0] >= range_cut * percentage_low_mod:
             moderate_extreme_events.append(cut_df)
         
-        # print(df_high_speed.shape[0],range_cut * 0.2)
-        # print(df_low_speed.shape[0],range_cut * 0.2)
-        # print(df_moderate_speed.shape[0],range_cut * 0.2)
+        # print(df_high_speed.shape[0],range_cut * percentage)
+        # if df_low_speed.shape[0] >= 50:
+        #     print("low",df_low_speed.shape[0],range_cut * percentage_low_mod)
+        # if df_moderate_speed.shape[0] >= 50:
+        #     print("moderate",df_moderate_speed.shape[0],range_cut * percentage_low_mod)
     return high_extreme_events, low_extreme_events, moderate_extreme_events
 
-def generate_dataset_winter_summer(df,range_cut,percentage=0.2):
+def generate_dataset_winter_summer(df,range_cut,percentage=0.2,percentage_low_mod=0.8):
 
     high_extreme_events_winter = []
     low_extreme_events_winter = []
@@ -257,8 +257,8 @@ def generate_dataset_winter_summer(df,range_cut,percentage=0.2):
         # Calculo si hay un 20 %
 
         df_high_speed = cut_df.filter(cut_df['wspeed135m'] >= float(speed_high))
-        df_low_speed = cut_df.filter(cut_df['wspeed135m'] <= float(speed_low))
-        df_moderate_speed = cut_df.filter((cut_df['wspeed135m'] >= float(speed_moderate_down)) & (cut_df['wspeed135m'] <= float(speed_moderate_up)))
+        # df_low_speed = cut_df.filter(cut_df['wspeed135m'] <= float(speed_low))
+        # df_moderate_speed = cut_df.filter((cut_df['wspeed135m'] >= float(speed_moderate_down)) & (cut_df['wspeed135m'] <= float(speed_moderate_up)))
 
 
         # time_split = datetime.strptime(,'%Y-%m-%d %H:%M:%S')
@@ -273,37 +273,29 @@ def generate_dataset_winter_summer(df,range_cut,percentage=0.2):
             else:
                 high_extreme_events_summer.append(cut_df)
                 # print(time_split,df_high_speed.shape[0], range_cut * percentage,"summer",start_date)
-
-        # # If we have less than range_cut * percentage, we check if with moderate we have
-        # elif df_high_speed.shape[0] >= 1 and df_high_speed.shape[0] + df_moderate_speed.shape[0] >= range_cut * percentage:
+        # if df_low_speed.shape[0] >= range_cut * percentage_low_mod:
         #     if date_md >= md_ini_winter or date_md <= md_end_winter:
-        #         high_extreme_events_winter.append(cut_df)
+        #         low_extreme_events_winter.append(cut_df)
         #     else:
-        #         high_extreme_events_summer.append(cut_df)
+        #         low_extreme_events_summer.append(cut_df)
 
-        if df_low_speed.shape[0] >= range_cut * percentage:
-            if date_md >= md_ini_winter or date_md <= md_end_winter:
-                low_extreme_events_winter.append(cut_df)
-            else:
-                low_extreme_events_summer.append(cut_df)
-
-        if df_moderate_speed.shape[0] >= range_cut * percentage:
-            if date_md >= md_ini_winter or date_md <= md_end_winter:
-                moderate_extreme_events_winter.append(cut_df)
-            else:
-                moderate_extreme_events_summer.append(cut_df)
+        # if df_moderate_speed.shape[0] >= range_cut * percentage_low_mod:
+        #     if date_md >= md_ini_winter or date_md <= md_end_winter:
+        #         moderate_extreme_events_winter.append(cut_df)
+        #     else:
+        #         moderate_extreme_events_summer.append(cut_df)
         
-        # print(df_high_speed.shape[0],range_cut * 0.2)
-        # print(df_low_speed.shape[0],range_cut * 0.2)
-        # print(df_moderate_speed.shape[0],range_cut * 0.2)
+        # print(df_high_speed.shape[0],range_cut * percentage)
+        # print(df_low_speed.shape[0],range_cut * percentage_low_mod)
+        # print(df_moderate_speed.shape[0],range_cut * percentage_low_mod)
     return high_extreme_events_winter, low_extreme_events_winter, moderate_extreme_events_winter, \
     high_extreme_events_summer, low_extreme_events_summer, moderate_extreme_events_summer
 
-def generate_datasets(df, range_cut, percentage,split_sw=False):
+def generate_datasets(df, range_cut, percentage, percentage_low_mod,split_sw=False):
     if not split_sw:
-        return generate_dataset_by_windows(df,range_cut,percentage)
+        return generate_dataset_by_windows(df,range_cut,percentage, percentage_low_mod)
     else:
-        return generate_dataset_winter_summer(df,range_cut,percentage)
+        return generate_dataset_winter_summer(df,range_cut,percentage, percentage_low_mod)
 
 # Generate datasets per windfarm and pressure, join it and save it.
 
@@ -338,7 +330,7 @@ def join_datasets(list_high_extreme_events, list_low_extreme_events, list_modera
 
     return df_high, df_low, df_moderate
 
-def get_datasets_per_pressure(df,pressure,range_cut,percentage,split_sw=False):
+def get_datasets_per_pressure(df,pressure,range_cut,percentage, percentage_low_mod,split_sw=False):
     if not split_sw:
         df_high = pl.DataFrame()
         df_low = pl.DataFrame()
@@ -367,17 +359,17 @@ def get_datasets_per_pressure(df,pressure,range_cut,percentage,split_sw=False):
         # list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events = find_extreme_events_high_low_moredate(df_windfarm,df_high_speed,df_low_speed,df_moderate_speed,range_cut)
         
         if not split_sw:
-            list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events = generate_datasets(df_windfarm, range_cut, percentage)
+            list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events = generate_datasets(df_windfarm, range_cut, percentage,percentage_low_mod)
             print("lista de eventos",len(list_high_extreme_events),len(list_low_extreme_events),len(list_moderate_extreme_events))
 
             df_high, df_low, df_moderate = join_datasets(list_high_extreme_events, list_low_extreme_events, list_moderate_extreme_events, windfarm, pressure, df_high, df_low, df_moderate)
 
-            print("df total",df_high.shape, df_low.shape, df_moderate.shape)
+            # print("df total",df_high.shape, df_low.shape, df_moderate.shape)
         else:
-            list_high_extreme_events_winter, list_low_extreme_events_winter, list_moderate_extreme_events_winter,list_high_extreme_events_summer, list_low_extreme_events_summer, list_moderate_extreme_events_summer = generate_datasets(df_windfarm, range_cut,percentage, split_sw)
+            list_high_extreme_events_winter, list_low_extreme_events_winter, list_moderate_extreme_events_winter,list_high_extreme_events_summer, list_low_extreme_events_summer, list_moderate_extreme_events_summer = generate_datasets(df_windfarm, range_cut,percentage, percentage_low_mod, split_sw)
             
-            print("lista de eventos",len(list_high_extreme_events_winter),len(list_low_extreme_events_winter),len(list_moderate_extreme_events_winter))
-            print("lista de eventos",len(list_high_extreme_events_summer),len(list_low_extreme_events_summer),len(list_moderate_extreme_events_summer))
+            print("lista de eventos winter",len(list_high_extreme_events_winter),len(list_low_extreme_events_winter),len(list_moderate_extreme_events_winter))
+            print("lista de eventos summmer",len(list_high_extreme_events_summer),len(list_low_extreme_events_summer),len(list_moderate_extreme_events_summer))
 
 
             df_high_winter, df_low_winter, df_moderate_winter = join_datasets(list_high_extreme_events_winter,\
@@ -392,13 +384,12 @@ def get_datasets_per_pressure(df,pressure,range_cut,percentage,split_sw=False):
                                                          windfarm,\
                                                          pressure,\
                                                          df_high_summer, df_low_summer, df_moderate_summer)
-
     if not split_sw:
         return df_high, df_low, df_moderate
     else:
         return df_high_winter, df_low_winter, df_moderate_winter,df_high_summer, df_low_summer, df_moderate_summer
 
-def get_datasets(df,range_cut, path, year, percentage = 0.2, split_sw=False):
+def get_datasets(df,range_cut, path, year, percentage = 0.2, percentage_low_mod = 0.8, split_sw=False):
     # pressures = ["900","925","950","975","1000"]
     pressures = ["925"]
     df_900, df_925, df_950, df_975, df_1000 = prepare_data_per_presure(df)
@@ -407,12 +398,19 @@ def get_datasets(df,range_cut, path, year, percentage = 0.2, split_sw=False):
     for index,df_pressure in enumerate([df_925]):
         # print(pressures[index])
         if not split_sw:
-            df_high, df_low, df_moderate = get_datasets_per_pressure(df_pressure,pressures[index],range_cut,percentage)
+            df_high, df_low, df_moderate = get_datasets_per_pressure(df_pressure,pressures[index],range_cut,percentage,percentage_low_mod)
+            if not os.path.exists(path):
+                os.makedirs(path)
             save_datasets(df_high, df_low, df_moderate, path, year, range_cut, split_sw)
         else:
-            df_high_winter, df_low_winter, df_moderate_winter,df_high_summer, df_low_summer, df_moderate_summer = get_datasets_per_pressure(df_pressure,pressures[index],range_cut, percentage, split_sw)
-            save_datasets(df_high_winter, df_low_winter, df_moderate_winter, "../../data/dataset_winter_split_13/", year, range_cut,split_sw,type_save="winter")
-            save_datasets(df_high_summer, df_low_summer, df_moderate_summer, "../../data/dataset_summer_split_13/", year, range_cut,split_sw,type_save="summer")
+            path_summer = "../../data/dataset_split_summer_15_20/"
+            path_winter = "../../data/dataset_split_winter_15_20/"
+            df_high_winter, df_low_winter, df_moderate_winter,df_high_summer, df_low_summer, df_moderate_summer = get_datasets_per_pressure(df_pressure,pressures[index],range_cut, percentage, percentage_low_mod, split_sw)
+            if not os.path.exists(path_summer) or not os.path.exists(path_winter):
+                os.makedirs(path_summer)
+                os.makedirs(path_winter)
+            save_datasets(df_high_winter, df_low_winter, df_moderate_winter, path_winter, year, range_cut,split_sw,type_save="winter")
+            save_datasets(df_high_summer, df_low_summer, df_moderate_summer, path_summer, year, range_cut,split_sw,type_save="summer")
 
 def reorder_columns(df_high, df_low, df_moderate):
 
@@ -439,12 +437,12 @@ def save_datasets(df_high, df_low, df_moderate, path, year, range_cut, split_sw,
 
     if split_sw:
         df_high.write_csv(os.path.join(path,f"{year}_{range_cut}_{speed_high}_high_{type_save}.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
-        df_low.write_csv(os.path.join(path,f"{year}_{range_cut}_low_{type_save}.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
-        df_moderate.write_csv(os.path.join(path,f"{year}_{range_cut}_moderate_{type_save}.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
+        # df_low.write_csv(os.path.join(path,f"{year}_{range_cut}_low_{type_save}.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
+        # df_moderate.write_csv(os.path.join(path,f"{year}_{range_cut}_moderate_{type_save}.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
     else:
         df_high.write_csv(os.path.join(path,f"{year}_{range_cut}_{speed_high}_high.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
-        df_low.write_csv(os.path.join(path,f"{year}_{range_cut}_low.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
-        df_moderate.write_csv(os.path.join(path,f"{year}_{range_cut}_moderate.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
+        # df_low.write_csv(os.path.join(path,f"{year}_{range_cut}_low.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
+        # df_moderate.write_csv(os.path.join(path,f"{year}_{range_cut}_moderate.csv"), datetime_format='%Y-%m-%d %H:%M:%S')
 
 
 
@@ -455,10 +453,12 @@ def save_datasets(df_high, df_low, df_moderate, path, year, range_cut, split_sw,
 ############################################
 
 
-def count_event_per_file(path):
+def count_event_per_file(path,file):
     df = pl.read_csv(path)
+    print(file,int(df.shape[0]/96))
     dic = []
     for windfarm in range(0,38):
         df_new = df.filter(pl.col("index") == windfarm)
         dic.append(df_new["n_event"].unique().shape[0])
+        # print(df_new["n_event"].unique().shape[0])
     return pl.DataFrame({"index":range(0,38),"events": dic})

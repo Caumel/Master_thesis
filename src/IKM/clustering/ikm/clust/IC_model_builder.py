@@ -1,13 +1,16 @@
 # import statsmodels.api as sm
 import collections.abc
 import sys
+sys.path.append('../../../')
+
+
 from math import sqrt, pi
 
 import numpy as np
 from numpy import linalg as la
 
 # OBJECT_DIM = 19
-from ikm.model_builder.model import Model
+from src.IKM.clustering.ikm.model_builder.model import Model
 
 
 class ICmodelBuilder:
