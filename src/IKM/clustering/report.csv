@@ -10,3 +10,8 @@ Path,Box-cox,Z-normalization,Z-score,Windmill are excluded,Clusters Purity,Rand 
 ../../../data/final_files/small,False,True,True,,46.34146341463414,0.5635079301612689,0.5252067437459114,eucl,all,all,1,2
 ../../../data/final_files/small,False,True,True,,65.85365853658537,0.703718512594962,0.3688018844387735,eucl,all,all,1,2
 ../../../data/final_files/normal_summer,False,True,True,,64.22764227642276,0.6640010662401706,0.4206200847073241,eucl,all,all,1,2
+../../../data/normal_summer,False,True,True,,72.35772357723577,0.7151805944288951,0.3390005891331304,eucl,all,all,1,2
+../../../data/normal_summer,False,True,True,,74.79674796747969,0.7299746767959483,0.3254719896997338,eucl,all,all,1,2
+../../../data/normal_15_30_summer_equal,False,True,True,,70.8491815642564,0.7554407104271433,0.245135501177293,eucl,all,all,49,25
+../../../data/normal_15_30_summer_equal,False,True,True,,77.08771544182392,0.7768407898263314,0.231799024464564,total,all,all,49,25
+../../../data/normal_15_30_summer_equal,False,True,True,,69.50380003815198,0.7516684560558268,0.24840189254030823,total,all,all,49,25

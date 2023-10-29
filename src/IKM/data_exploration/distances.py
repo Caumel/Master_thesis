@@ -30,8 +30,8 @@ class DistanceMeasurer():
 
         final_str += f"{distance}"
 
-        file.write(final_str)
-        file.close()
+        # file.write(final_str)
+        # file.close()
 
         return distance
 
@@ -106,11 +106,12 @@ class DistanceMeasurer():
         """
         n_row_x = x.shape[0]
         n_row_y = y.shape[0]
-        ccmtx_xy = np.empty((n_row_x, n_row_y))
+        ccmtx_xy = np.empty((n_row_y, n_row_y))
         for n in range(n_row_x):
             for m in range(n_row_y):
                 ccmtx_xy[n, m] = pearsonr(x[n, :], y[m, :])[0]
 
+        print(ccmtx_xy.shape)
         return ccmtx_xy
 
     def corr2_coeff(self, A, B):
@@ -136,7 +137,7 @@ class DistanceMeasurer():
             annot (boolean): annotate the graph or not.
             mode (string): 'one' (default) -- generate one graph, 'multiple' -- generate multiple graphs.
         """
-
+        columns = ['cc','o3','pv','cape','blh','d2m','z','relative_humidity','t2m','t100m','t135m','wdir100m','wspeed135m','wspeed100m']
 
         if mode == 'multiple':
             # Turn interactive plotting off
@@ -163,11 +164,11 @@ class DistanceMeasurer():
             coeff_1 = np.loadtxt(os.path.join(path_1), delimiter=delimeter)
             coeff_2 = np.loadtxt(os.path.join(path_2), delimiter=delimeter)
             rho = self.correlation_map(coeff_1, coeff_2)
-            heatmap = sb.heatmap(rho, cmap="Blues", annot=annot)
+            plt.figure(figsize=(20, 6))
+            heatmap = sb.heatmap(rho, cmap="YlGnBu", annot=annot, xticklabels=columns, yticklabels=columns)
             # heatmap.fig.set_size_inches(15,15)
 
-            heatmap.set(xlabel=f'{os.path.basename(path_1)}', ylabel=f'{os.path.basename(path_2)}')
-
-            fig = heatmap.get_figure()
-            fig.savefig(f'correlation-coeffs-{os.path.basename(path_1)}-{os.path.basename(path_2)}.png')
+            heatmap.set(xlabel=f'{"Summer"}', ylabel=f'{"Winter"}')
             plt.show()
+            # fig = heatmap.get_figure()
+            # fig.savefig(f'correlation-coeffs-{os.path.basename(path_1)}-{os.path.basename(path_2)}.png')

@@ -175,7 +175,11 @@ class ICmodelBuilder:
         """
         Finds log-likelihood.
         """
-        result = (m / 2.0) * np.log(2 * pi)
+        if sigma <= 0:
+            # Option 1: Return a predefined value indicating an error (like NaN)
+            return np.nan
+        
+        result = (m / 2.0) * np.log(2 * np.pi)
         result += (m / 2.0)
         result += (m / 2.0) * np.log(sigma)
         return -result

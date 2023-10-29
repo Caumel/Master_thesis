@@ -12,7 +12,7 @@ os.chdir('../')
 years = ["2000","2001","2002","2003","2004","2005","2006","2007","2008","2009",\
          "2010","2011","2012","2013","2014","2015","2016","2017","2018","2019","2020"]
 kind = "_summer"
-path_read = os.path.join(url_data,"final_files",f"normal{kind}")
+path_read = os.path.join(url_data,"final_files",f"normal_15_30{kind}")
 
 ruta_original = os.path.join(url_data,"final_files",f"normal_15_30{kind}_reducido",f"moderate.csv")
 ruta_destino = os.path.join(url_data,"final_files",f"normal_15_30{kind}_equal",f"moderate.csv")

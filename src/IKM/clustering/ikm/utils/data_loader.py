@@ -123,7 +123,10 @@ class DataLoader:
                 
             list_events.append(time_series)
 
-            self.create_files_per_event(subset,category,path_save_file_per_event)
+            #TODO:
+            #   Esta linea crea los ficheros por experimento y evento.
+
+            # self.create_files_per_event(subset,category,path_save_file_per_event)
 
             # break
 
