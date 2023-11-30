@@ -127,7 +127,7 @@ class DistanceMeasurer():
 
         return np.dot(A_mA, B_mB.T) / np.sqrt(np.dot(ssA[:, None], ssB[None]))
 
-    def correlation_between_coeffs(self, paths, delimeter, annot, mode='one'):
+    def correlation_between_coeffs(self, paths, delimeter, annot, mode='one',Xlabel = "Summer", Ylabel = "Winter",title = "Title",save=""):
 
         """
         Creating a graph with the correlations.
@@ -168,7 +168,10 @@ class DistanceMeasurer():
             heatmap = sb.heatmap(rho, cmap="YlGnBu", annot=annot, xticklabels=columns, yticklabels=columns)
             # heatmap.fig.set_size_inches(15,15)
 
-            heatmap.set(xlabel=f'{"Summer"}', ylabel=f'{"Winter"}')
+            heatmap.set(xlabel=f'{Xlabel}', ylabel=f'{Ylabel}',)
+            plt.title(title)
+            print(os.listdir())
+            plt.savefig(save, dpi=300, format='png', bbox_inches='tight')
             plt.show()
             # fig = heatmap.get_figure()
             # fig.savefig(f'correlation-coeffs-{os.path.basename(path_1)}-{os.path.basename(path_2)}.png')
